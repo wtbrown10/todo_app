@@ -1,24 +1,77 @@
+import { useEffect } from "react";
+import { useState } from "react";
+import { retrieveAllTodosForUsernameApi, deleteTodoApi } from "./api/TodoApiService";
+import { useAuth } from "./security/AuthContext";
+
 export default function ListTodoComponent() {
 
     const today = new Date();
+
+    const authContext = useAuth()
+
+    const username = authContext.username
+
     const targetDate = new Date(today.getFullYear()+12, today.getMonth(), today.getDay())
 
-    const todos = [
-        {id: 1, description: 'Learn AWS', done: false, targetDate:targetDate},
-        {id: 2, description: 'Learn Python', done: false, targetDate:targetDate},
-        {id: 3, description: 'Learn Java', done: false, targetDate:targetDate}
-]
+    const [todos, setTodos] = useState([])
+
+    const [message, setMessage] = useState(null)
+
+    useEffect(
+        () => {
+            refreshTodos()}, []
+    )
+
+    function refreshTodos(){
+    retrieveAllTodosForUsernameApi(username)
+        .then(response => {
+            setTodos(response.data)
+        }
+        )
+        .catch(error => console.log(error))
+        .finally()
+    }
+
+    function deleteTodo(id){
+        console.log("clicked: " + id)
+        deleteTodoApi(username, id)
+        .then(
+            () => {
+                setMessage(`Delete of todo with id: ${id} succesful`)
+                refreshTodos()
+            }
+        )
+        .catch()
+        .finally()
+    }
+
+    function updateTodo(id){
+        console.log("clicked: " + id)
+        deleteTodoApi(username, id)
+        .then(
+            () => {
+                setMessage(`Delete of todo with id: ${id} succesful`)
+                refreshTodos()
+            }
+        )
+        .catch()
+        .finally()
+    }
+
+
     return(
         <div className="container">
             <h1>Things You Want To Do!</h1>
+            {message && <div className=" alert alert-warning">{message}</div>}
             <div>
                 <table className='table' >
                     <thead>
                         <tr>
-                            <td>id</td>
-                            <td>description</td>
-                            <td>Is Done?</td>
-                            <td>Target Date</td>
+                            <th>Description</th>
+                            <th>Is Done?</th>
+                            <th>Target Date</th>
+                            <th>Delete</th>
+                            <th>Update</th>
                         </tr>
 
                     </thead>
@@ -26,10 +79,15 @@ export default function ListTodoComponent() {
                         {
                             todos.map(todo => (
                                     <tr key={todo.id}>
-                                        <td>{todo.id}</td>
+                                        {/* <td>{todo.id}</td> */}
                                         <td>{todo.description}</td>
                                         <td>{todo.done.toString()}</td>
-                                        <td>{todo.targetDate.toDateString()}</td>
+                                        {/* <td>{todo.targetDate.toDateString()}</td> */}
+                                        <td>{todo.targetDate.toString()}</td>
+                                        <td><button className="btn btn-warning" 
+                                        onClick={() => deleteTodo(todo.id)}>Delete</button></td>
+                                        <td><button className="btn btn-warning" 
+                                        onClick={() => updateTodo(todo.id)}>Update</button></td>
                                         </tr>
                             )
                         )

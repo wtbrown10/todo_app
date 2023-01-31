@@ -17,4 +17,4 @@ export const retrieveHelloWorldBean
     = () => axios.get('http://localhost:8080/hello-world-bean')
 
 export const retrieveHelloWorldPathVariable
-    = (username) => apiClient.get(`http://localhost:8080/hello-world/path-variable/${username}`)
+    = (username) => apiClient.get(`/hello-world/path-variable/${username}`)
