@@ -40,7 +40,7 @@ export default function ListTodoComponent() {
         deleteTodoApi(username, id)
         .then(
             () => {
-                setMessage(`Delete of todo with id: ${id} succesful`)
+                setMessage(`Delete of todo with id: ${id} succesfull`)
                 refreshTodos()
             }
         )
