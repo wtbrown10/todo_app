@@ -34,6 +34,10 @@ export default function ListTodoComponent() {
         .catch(error => console.log(error))
         .finally()
     }
+    // useEffect(
+    //     () => {
+    //         refreshTodos()}, []
+    // )
 
     function deleteTodo(id){
         console.log("clicked: " + id)
