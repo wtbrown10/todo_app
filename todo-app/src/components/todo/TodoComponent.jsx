@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { retrieveTodoApi, updateTodoApi } from "./api/TodoApiService"
+import { createTodoApi, retrieveTodoApi, updateTodoApi } from "./api/TodoApiService"
 import { useAuth } from "./security/AuthContext"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 
@@ -21,13 +21,17 @@ export default function TodoComponent() {
         [id])
 
     function retrieveTodos(){
-        retrieveTodoApi(username, id)
-        .then(response => {
-            console.log(response)
-        //    setDescription(response.data.description) 
-        //    setTargetDate(response.data.targetDate)
-        })
-        .catch(error => console.log(error))        
+        if(id != -1){
+
+
+            retrieveTodoApi(username, id)
+            .then(response => {
+                console.log(response)
+            //    setDescription(response.data.description) 
+            //    setTargetDate(response.data.targetDate)
+            })
+            .catch(error => console.log(error))   
+        }     
     }
 
     function onSubmit(values) {
@@ -41,13 +45,25 @@ export default function TodoComponent() {
         }
         console.log(todo)
         
+        if(id == -1) {
+            createTodoApi(username, todo)
+        .then(response => {
+            navigate('/todos')
+            // setDescription(response.data.description) 
+            // setTargetDate(response.data.targetDate) 
+         })
+         .catch(error => console.log(error))
+        } else {
+
+        
         updateTodoApi(username, id, todo )
         .then(response => {
             navigate('/todos')
             // setDescription(response.data.description) 
-            // setTargetDate(response.data.targetDate)
+            // setTargetDate(response.data.targetDate) 
          })
          .catch(error => console.log(error))
+        }
     }
 
     function validate(values) {
@@ -58,7 +74,7 @@ export default function TodoComponent() {
         if(values.description.length < 5){
             errors.description = 'Enter atleast 5 characters'}
 
-        if(values.targetDate == null){
+        if(values.targetDate == null || values.targetDate == '' ){
                 errors.description = 'Enter a target date'}
 
         console.log(values);
